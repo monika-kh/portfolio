@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% if request.user.is_staff %} 
+    {% block object-tools-items %}
+        {{ block.super }}
+
+        <li>
+            <a action="GET" href="{% url 'admin:viewmap' %}">View Map</a>
+        </li>
+
+    {% endblock %}
+{% endif %}

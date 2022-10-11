@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: 100%;
+    }
+
+    .controls {
+      margin-top: 10px;
+      border: 1px solid transparent;
+      border-radius: 2px 0 0 2px;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      height: 32px;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    #pac-input {
+      background-color: #fff;
+      font-family: Roboto;
+      font-size: 15px;
+      font-weight: 300;
+      margin-left: 12px;
+      padding: 0 11px 0 13px;
+      text-overflow: ellipsis;
+      width: 300px;
+    }
+
+    #pac-input:focus {
+      border-color: #4d90fe;
+    }
+
+    .pac-container {
+      font-family: Roboto;
+    }
+
+    #type-selector {
+      color: #fff;
+      background-color: #4d90fe;
+      padding: 5px 11px 0px 11px;
+    }
+
+    #type-selector label {
+      font-family: Roboto;
+      font-size: 13px;
+      font-weight: 300;
+    }
+  </style>
+  <title>Places Searchbox</title>
+  <style>
+    #target {
+      width: 345px;
+    }
+  </style>
+</head>
+
+<body data-js-vars='{{users}}'>  
+
+  <div id="map">
+  </div>
+  <script>
+
+    function initAutocomplete() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: -33.8688, lng: 151.2195 },
+        zoom: 2,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+        // Create info window
+        var infowindow = new google.maps.InfoWindow({
+            maxWidth: 350,
+            pixelOffset: new google.maps.Size(-10,-25)
+        });
+
+      body_tag = document.getElementsByTagName('body')
+      body_attr = body_tag[0].getAttribute('data-js-vars')
+      user_lat_lan = JSON.parse(body_attr)
+      function isFloat(n){
+          return Number(n) === n && n % 1 !== 0;
+        }
+        var idx
+        var infoFn = function (idx) {
+        return function (e) {
+          var content = '<div>'+
+            '<img src="/static/defaulting.jpg" alt="img" height=50px; width=40px>'+
+            '<span><b> Username: </b>' + user_lat_lan[idx][0] + '</span>' +
+            '<span>,<b> Address: </b>' + user_lat_lan[idx][4] + '</span>' +
+            '<span>,<b> Phone Number: </b>' + user_lat_lan[idx][3] + '</span>' +
+            '<span>, <b>Lat: </b>' + user_lat_lan[idx][1] + '</span>' +
+            '<span>, <b>Long: </b>' + user_lat_lan[idx][2] + '</span>' +
+            '</div>';
+            infowindow.setContent(content);
+            infowindow.open(map);
+            infowindow.setPosition(new google.maps.LatLng(user_lat_lan[idx][2], user_lat_lan[idx][1]));
+        }
+    };
+      for(idx=0;idx<user_lat_lan.length; idx++){
+            lan = parseFloat(user_lat_lan[idx][1])
+            lat = parseFloat(user_lat_lan[idx][2])
+            if (isFloat(lat) && isFloat(lan)){
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat, lan),
+                    map: map,
+                    title : 'map',
+                });
+            lat = ''
+            lan = ''
+            let details = infoFn(idx);
+
+            google.maps.event.addListener(marker, 'click', details )
+            }
+      }
+      // [END region_getplaces]
+    }
+
+  </script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkwr5rmzY9btU08sQlU9N0qfmo8YmE91Y&libraries=places&callback=initAutocomplete"
+    async defer></script>
+</body>
+
+</html>
+
+
+
+
+
